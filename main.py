@@ -2,7 +2,7 @@ import os
 import csv
 import pandas as pd
 from tqdm import tqdm
-from simpletransformers.classification import TransformerModel
+from simpletransformers.language_modeling import LanguageModelingModel
 
 from sklearn.model_selection import train_test_split
 
@@ -55,7 +55,7 @@ test_df = pd.DataFrame(list_of_tuples, columns=['text_a', 'text_b', 'label'])
 labels_test = pd.Series(test_df['label']).to_numpy()
 
 
-model = TransformerModel('roberta', 'roberta-base', num_labels=4, args={
+model = LanguageModelingModel('roberta', 'roberta-base', num_labels=4, args={
     'learning_rate':1e-5,
     'num_train_epochs': 10,
     'reprocess_input_data': True,
