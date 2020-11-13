@@ -45,11 +45,17 @@ type ArticleInfo struct {
 	Title     string `json:"title"`
 	Content   string `json:"text"`
 	URL       string `json:"pageUrl"`
+	Label     string `json:"label"`
 }
 
 type TestArticle struct {
 	Request     Request       `json:"request"`
 	ArticleInfo []ArticleInfo `json:"objects"`
+}
+
+type NewsURLInput struct {
+	URL   string
+	Label string
 }
 
 type Options struct {
@@ -108,8 +114,8 @@ func parseArguments() *RestParameters {
 	return parameters
 }
 
-func parseArticle(token, newsURL string) (n ArticleInfo, e error) {
-	article, e := ParseIt(token, newsURL, nil)
+func parseArticle(token string, newsObj NewsURLInput) (n ArticleInfo, e error) {
+	article, e := ParseIt(token, newsObj.URL, nil)
 	if e != nil {
 		return
 	}
@@ -339,9 +345,9 @@ func (p *Options) MethodParamString(method string) string {
 	return ""
 }
 
-func openCSV(newsLocation string) []string {
+func openCSV(newsLocation string) []NewsURLInput {
 	fmt.Println("================== openning csv ==================")
-	var newsArr []string
+	var newsArr []NewsURLInput
 	csvfile, err := os.Open(newsLocation)
 	if err != nil {
 		log.Fatalln("Couldn't open the csv file", err)
@@ -361,30 +367,55 @@ func openCSV(newsLocation string) []string {
 			log.Fatal(err)
 		}
 		fmt.Println("found news site: " + record[0])
-		newsArr = append(newsArr, record[0])
+
+		newsArr = append(newsArr, NewsURLInput{
+			URL:   record[0],
+			Label: record[1],
+		})
 	}
 	return newsArr
 }
 
-func scanForArticle(token string, newsArr []string) (artInfoArr []ArticleInfo) {
+func scanForArticle(token string, newsArr []NewsURLInput) (artInfoArr []ArticleInfo) {
 	fmt.Println("================== scanning csv ==================")
 
 	for _, news := range newsArr {
-		fmt.Println("scanning for article " + news)
+		fmt.Println("scanning for article " + news.URL)
 
 		newsObj, e := parseArticle(token, news)
 		if e != nil {
 			log.Fatal("failed to parse article. Error: " + e.Error())
 		} else {
+			newsObj.Label = news.Label
 			artInfoArr = append(artInfoArr, newsObj)
 		}
 	}
 	return
 }
 
+func writeCSVDescriptors(csvLoc string) {
+	file, err := os.OpenFile(csvLoc, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	w := csv.NewWriter(file)
+	t := []string{"Title", "Text", "URL", "Author", "Date", "NewsSource", "Label"}
+	e := w.Write(t)
+	if e != nil {
+		fmt.Println(e.Error())
+	}
+	w.Flush()
+}
+
 func writeCSV(csvLoc string, infos []ArticleInfo) {
 	fmt.Println("================== write to csv ==================")
 	var file *os.File
+
+	if _, err := os.Stat(csvLoc); os.IsNotExist(err) {
+		writeCSVDescriptors(csvLoc)
+	}
+
 	file, err := os.OpenFile(csvLoc, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -402,6 +433,7 @@ func writeCSV(csvLoc string, infos []ArticleInfo) {
 		t = append(t, value.Author)
 		t = append(t, value.Date)
 		t = append(t, value.NewsSorce)
+		t = append(t, value.Label)
 		err = w.Write(t)
 		if err != nil {
 			log.Fatal(err.Error())
