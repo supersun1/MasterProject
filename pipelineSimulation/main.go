@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
@@ -18,6 +19,8 @@ func getDuration(in, off int) time.Duration {
 }
 
 func main() {
+	fmt.Println("here")
+	time.Sleep(2 * time.Second)
 	rand.Seed(time.Now().Unix())
 	count := rand.Intn(15-5) + 5
 	count2 := rand.Intn(10) + 3
