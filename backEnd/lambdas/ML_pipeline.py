@@ -208,19 +208,8 @@ def parse_text(input_text):
     return o.join(strs[0:500])
 
 
-## primary function
+# ======================== Lambda Handler Function ========================
 def lambda_handler(event, context):
-    # # lambda receives the input from the web app as an event in json format
-    # print(event)
-    # input_text = event['body']
-    # print(event['body'])
-    # input_text = event['body']
-
-    # return {
-    #     'statusCode' : 200,
-    #     'headers' : { 'Content-Type' : 'text/plain', 'Access-Control-Allow-Origin' : '*' },
-    #     'body' : event['body']
-    # }
 
     input_text = event['name']
 
@@ -236,10 +225,9 @@ def lambda_handler(event, context):
       "confidence_score": "{:.2%}".format(float(confidence_score/100)),
     }
 
-
-    # we return the output in a format expected by API Gateway
     return {
         'statusCode' : 200,
         'headers' : { 'Content-Type' : 'text/plain', 'Access-Control-Allow-Origin' : '*' },
         'body' : result
     }
+# ======================== Lambda Handler Function ========================
