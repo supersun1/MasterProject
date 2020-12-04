@@ -7,9 +7,7 @@ from transformers import (BertForSequenceClassification,
                           AdamW)
 
 def model_fn(model_dir):
-    """
-    Load the model for inference
-    """
+    #=====================Loading the Model==========================
     device = torch.device('cpu')
     print('load the model')
 
@@ -34,9 +32,7 @@ def model_fn(model_dir):
     return model_dict
 
 def predict_fn(input_data, model):
-    """
-    Apply model to the incoming request
-    """
+        #===================Setting up the Model to receive requests=======================
     
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
     model = model['model']
@@ -54,9 +50,7 @@ def predict_fn(input_data, model):
     return bert_final[0]
 
 def input_fn(request_body, request_content_type):
-    """
-    Deserialize and prepare the prediction input
-    """
+       #===================Preparing the input for the Model========================
     
     if request_content_type == "application/json":
         request = json.loads(request_body)
@@ -66,9 +60,7 @@ def input_fn(request_body, request_content_type):
     return request
 
 def output_fn(prediction, response_content_type):
-    """
-    Serialize and prepare the prediction output
-    """
+    #=====================Preparing the output from the Model==========================
     
     if response_content_type == "application/json":
         response = str(prediction)
