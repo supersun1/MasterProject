@@ -20,6 +20,7 @@ This accomplishment is explained at a high level in the following [video](https:
 
 ## Front End Start Up Guide
 Install node.js by downloading the latest here https://nodejs.org/en/download/ or using Homebrew through the terminal
+
 node.js comes with npm 
 
 Download the front-end code and open on your IDE of your choice.
