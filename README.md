@@ -72,6 +72,19 @@ A publicly accessible S3 bucket is created for statically hosting our Front End.
 ### Model Training
 For our project, we are using PyTorch as our framework. The NVIDIA’s CUDA is used to accelerate the training process. The pre-trained BERT and RoBERTa is imported through the Hugging Face Transformers library. We apply a label count of 2 for binary classification. The input CSV files are parsed and loaded into a pandas data frame, the true and false target set and combined into a single training data set. The training data is tokenized and converted by both the BERT and RoBERTa tokenizer. Next the training data set is passed to the models for training.  Once training is completed, the weights and biases is saved.
 
+## Using the Training Notebook
+Replace values you want to use for training in the realnews.csv and fakenews.csv
+Run all cells in the Training Juypter notebook.
+Trained model's weights and biases are saved to bert.pth and roberta.pth
+
 ### Inference
 For inference, the base BERT and RoBERTa models must be loaded and have the weights and biases loaded from our saved files. The input data is parsed and tokenized and converted to tensors. Then it is converted into a numpy array so we can use it for output.
+
+## Using the Inference Notebook
+Copy the bert.pth and roberta.pth file created by the Training notebook.
+Run all cell in the Inference Notebook.
+You can remove the block of code that creates the text input prompt if you want to create the input.json file differently.
+
+
+
 
